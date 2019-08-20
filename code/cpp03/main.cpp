@@ -107,13 +107,6 @@ float ManhattanToOrigin(Pos2d_cptr point)
   return std::abs(point->x) + std::abs(point->y);
 }
 
-
-bool Pos2dIsNearOrigin(Pos2d_ptr point)
-{
-  return (ManhattanToOrigin(point) < 0.5f);
-}
-
-
 Pos2d_cptr NearestToOrigin(const std::vector<Pos2d_ptr>& points,
                        float& min_distance)
 {
@@ -139,6 +132,10 @@ int main()
   std::vector<Pos2d_ptr> points;
   for (auto i = 0; i < 100; ++i)
     points.push_back(RandomPos2d());
+
+  auto Pos2dIsNearOrigin = [] (Pos2d_cptr point) -> bool {
+    return (ManhattanToOrigin(point) < 0.5f);
+  };
 
   int nearOrigin = 0;
   for (const auto & point : points)
