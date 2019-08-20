@@ -107,23 +107,22 @@ float ManhattanToOrigin(Pos2d_cptr point)
   return std::abs(point->x) + std::abs(point->y);
 }
 
-Pos2d_cptr NearestToOrigin(const std::vector<Pos2d_ptr>& points,
-                       float& min_distance)
+std::tuple<Pos2d_cptr, float> NearestToOrigin(const std::vector<Pos2d_ptr>& points)
 {
-  unsigned int min_index = 0;
-  min_distance = std::numeric_limits<float>::max();
+  Pos2d_cptr min_point{nullptr};
+  float min_distance = std::numeric_limits<float>::max();
 
   //WRG: Don't change this loop for now (need to access to the index)
-  for (unsigned int i = 0; i < points.size(); ++i)
+  for (auto point : points)
   {
-    if (ManhattanToOrigin(points[i]) < min_distance)
+    if (ManhattanToOrigin(point) < min_distance)
     {
-      min_index = i;
-      min_distance = ManhattanToOrigin(points[i]);
+      min_point = point;
+      min_distance = ManhattanToOrigin(point);
     }
   }
 
-  return points[min_index];
+  return std::make_tuple(min_point, min_distance);
 }
 
 
@@ -145,8 +144,10 @@ int main()
   std::cout << nearOrigin << " of " << points.size()
             << " points are near the origin.\n";
 
+  Pos2d_cptr nearest_point;
   float min_distance;
-  Pos2d_cptr nearest_point = NearestToOrigin(points, min_distance);
+  std::tie(nearest_point, min_distance) = NearestToOrigin(points);
+
   std::cout << "The nearest point was " << *nearest_point
             << " with distance " << min_distance << "\n";
 
