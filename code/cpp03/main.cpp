@@ -34,6 +34,8 @@
   #include <ctime>
 #endif
 
+// std::make_shared
+#include <memory>
 
 /**
  * Generate a uniformly random number in [-1, +1]
@@ -85,32 +87,34 @@ std::ostream& operator<<(std::ostream& os, const Pos2d& point)
   return os;
 }
 
+using Pos2d_ptr = std::shared_ptr<Pos2d>;
+using Pos2d_cptr = std::shared_ptr<const Pos2d>;
 
 /**
  * Generate a Pos2d with x and y coordinates uniformly i.i.d.
  * in [-1, +1]
  */
-Pos2d* RandomPos2d()
+Pos2d_ptr RandomPos2d()
 {
-  Pos2d* new_point = new Pos2d(RandomNumber(), RandomNumber());
+  auto new_point = std::make_shared<Pos2d>(RandomNumber(), RandomNumber());
   std::cout << "New point " << *new_point << " created\n";
   return new_point;
 }
 
 
-float ManhattanToOrigin(Pos2d* point)
+float ManhattanToOrigin(Pos2d_cptr point)
 {
   return std::abs(point->x) + std::abs(point->y);
 }
 
 
-bool Pos2dIsNearOrigin(Pos2d* point)
+bool Pos2dIsNearOrigin(Pos2d_ptr point)
 {
   return (ManhattanToOrigin(point) < 0.5f);
 }
 
 
-Pos2d* NearestToOrigin(const std::vector<Pos2d*>& points,
+Pos2d_cptr NearestToOrigin(const std::vector<Pos2d_ptr>& points,
                        float& min_distance)
 {
   unsigned int min_index = 0;
@@ -132,7 +136,7 @@ Pos2d* NearestToOrigin(const std::vector<Pos2d*>& points,
 
 int main()
 {
-  std::vector<Pos2d*> points;
+  std::vector<Pos2d_ptr> points;
   for (auto i = 0; i < 100; ++i)
     points.push_back(RandomPos2d());
 
@@ -145,15 +149,9 @@ int main()
             << " points are near the origin.\n";
 
   float min_distance;
-  Pos2d* nearest_point = NearestToOrigin(points, min_distance);
+  Pos2d_cptr nearest_point = NearestToOrigin(points, min_distance);
   std::cout << "The nearest point was " << *nearest_point
             << " with distance " << min_distance << "\n";
-
-  /// Tidy up
-  for (auto & point : points)
-    delete point;
-
-
 
   #if __cplusplus > 199711L
     std::cout << "Compiled using C++11 or later\n";
