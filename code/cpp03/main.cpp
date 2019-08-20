@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Nikolaus Mayer
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -115,6 +115,8 @@ Pos2d* NearestToOrigin(const std::vector<Pos2d*>& points,
 {
   unsigned int min_index = 0;
   min_distance = std::numeric_limits<float>::max();
+
+  //WRG: Don't change this loop for now (need to access to the index)
   for (unsigned int i = 0; i < points.size(); ++i)
   {
     if (ManhattanToOrigin(points[i]) < min_distance)
@@ -131,15 +133,15 @@ Pos2d* NearestToOrigin(const std::vector<Pos2d*>& points,
 int main()
 {
   std::vector<Pos2d*> points;
-  for (int i = 0; i < 100; ++i)
+  for (auto i = 0; i < 100; ++i)
     points.push_back(RandomPos2d());
 
   int nearOrigin = 0;
-  for (unsigned int i = 0; i < points.size(); ++i)
-    if (Pos2dIsNearOrigin(points[i]))
+  for (const auto & point : points)
+    if (Pos2dIsNearOrigin(point))
       ++nearOrigin;
 
-  std::cout << nearOrigin << " of " << points.size() 
+  std::cout << nearOrigin << " of " << points.size()
             << " points are near the origin.\n";
 
   float min_distance;
@@ -148,8 +150,8 @@ int main()
             << " with distance " << min_distance << "\n";
 
   /// Tidy up
-  for (unsigned int i = 0; i < points.size(); ++i)
-    delete points[i];
+  for (auto & point : points)
+    delete point;
 
 
 
