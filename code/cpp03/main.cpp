@@ -75,20 +75,26 @@ float RandomNumber()
 /**
  * A point in 2d space
  */
+template <typename T>
 struct Pos2d {
-  Pos2d(float x, float y) : x(x), y(y) {}
-  float x;
-  float y;
+  Pos2d(T x, T y) : x(x), y(y)
+  {
+    static_assert(std::is_floating_point<T>::value,
+                  "'Pos2d' class only works for float types!'");
+  }
+  T x;
+  T y;
 };
 
-std::ostream& operator<<(std::ostream& os, const Pos2d& point)
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Pos2d<T>& point)
 {
   os << "(" << point.x << ", " << point.y << ")";
   return os;
 }
 
-using Pos2d_ptr = std::shared_ptr<Pos2d>;
-using Pos2d_cptr = std::shared_ptr<const Pos2d>;
+using Pos2d_ptr = std::shared_ptr<Pos2d<float>>;
+using Pos2d_cptr = std::shared_ptr<const Pos2d<float>>;
 
 /**
  * Generate a Pos2d with x and y coordinates uniformly i.i.d.
@@ -96,11 +102,10 @@ using Pos2d_cptr = std::shared_ptr<const Pos2d>;
  */
 Pos2d_ptr RandomPos2d()
 {
-  auto new_point = std::make_shared<Pos2d>(RandomNumber(), RandomNumber());
+  auto new_point = std::make_shared<Pos2d<float>>(RandomNumber(), RandomNumber());
   std::cout << "New point " << *new_point << " created\n";
   return new_point;
 }
-
 
 float ManhattanToOrigin(Pos2d_cptr point)
 {
